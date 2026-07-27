@@ -58,3 +58,5 @@ jobs:
         run: |
           pnpm --filter @food-marketplace/web validate-env
           pnpm --filter @food-marketplace/admin validate-env
+      - name: Next.js production build (web)
+        run: pnpm --filter @food-marketplace/web build

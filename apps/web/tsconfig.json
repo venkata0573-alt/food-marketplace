@@ -2,8 +2,26 @@
   "extends": "@food-marketplace/config/tsconfig/react.json",
   "compilerOptions": {
     "noEmit": true,
-    "rootDir": "."
+    "rootDir": ".",
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "jsx": "preserve",
+    "allowJs": true,
+    "incremental": true,
+    "isolatedModules": true
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx", "scripts/**/*.ts", "src/api/**/*.ts"],
-  "exclude": ["src/middleware.example.ts"]
+  "include": [
+    "app/**/*.ts",
+    "app/**/*.tsx",
+    "middleware.ts",
+    "next-env.d.ts",
+    "next.config.mjs",
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    ".next/types/**/*.ts"
+  ],
+  "exclude": ["node_modules", ".next"]
 }

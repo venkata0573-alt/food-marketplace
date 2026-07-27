@@ -4,18 +4,30 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "dev": "next dev --port 3000",
     "validate-env": "tsx scripts/validate-env.ts",
-    "build": "pnpm validate-env && node -e \"process.exit(0)\"",
+    "build": "pnpm validate-env && next build",
+    "start": "next start",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@food-marketplace/auth": "workspace:*",
     "@food-marketplace/config": "workspace:*",
-    "@food-marketplace/shared": "workspace:*"
+    "@food-marketplace/domain": "workspace:*",
+    "@food-marketplace/feature-flags": "workspace:*",
+    "@food-marketplace/shared": "workspace:*",
+    "inngest": "^3.35.0",
+    "next": "^15.2.4",
+    "pg": "^8.14.1",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "stripe": "^17.7.0",
+    "zod": "^3.24.2"
   },
   "devDependencies": {
+    "@types/pg": "^8.11.11",
     "@types/react": "^19.0.10",
-    "react": "^19.0.0",
-    "@food-marketplace/config": "workspace:*",
+    "@types/react-dom": "^19.0.4",
     "tsx": "^4.19.3",
     "typescript": "^5.8.2"
   }

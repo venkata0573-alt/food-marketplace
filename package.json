@@ -25,6 +25,7 @@
   },
   "devDependencies": {
     "@food-marketplace/config": "workspace:*",
+    "@food-marketplace/domain": "workspace:*",
     "@food-marketplace/auth": "workspace:*",
     "@food-marketplace/shared": "workspace:*",
     "@food-marketplace/db": "workspace:*",

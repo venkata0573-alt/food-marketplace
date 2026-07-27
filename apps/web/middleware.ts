@@ -1,12 +1,12 @@
-/**
- * Next.js middleware example — wire CSRF/Origin guard for mutations.
- * Copy into apps/web or apps/admin when Next.js middleware is enabled.
- */
 import { guardStateChangingRequest } from '@food-marketplace/auth/server';
 import { NextResponse, type NextRequest } from 'next/server';
 
 export function middleware(request: NextRequest) {
-  if (request.nextUrl.pathname.startsWith('/api/')) {
+  const path = request.nextUrl.pathname;
+  if (path.startsWith('/api/webhooks/') || path.startsWith('/api/inngest')) {
+    return NextResponse.next();
+  }
+  if (path.startsWith('/api/') && request.method !== 'GET') {
     try {
       guardStateChangingRequest(
         {
@@ -20,7 +20,10 @@ export function middleware(request: NextRequest) {
         },
       );
     } catch {
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+      return NextResponse.json(
+        { error: { code: 'FORBIDDEN', message: 'Forbidden' } },
+        { status: 403 },
+      );
     }
   }
   return NextResponse.next();

@@ -41,6 +41,13 @@ RBAC (`customer` → `superadmin`) in [`packages/shared/authz.ts`](packages/shar
 - **Docs:** [docs/authorization-and-governance.md](docs/authorization-and-governance.md)
 - **Jobs:** `pnpm jobs:retention`
 
+## Layer 6 — Backend architecture
+
+Next.js App Router (server-first), ESLint layer boundaries (`routes → services → repositories → db`), Zod at boundaries, `Result` types in services, Stripe webhook + Inngest async jobs, feature flags.
+
+- **Docs:** [docs/backend-architecture.md](docs/backend-architecture.md)
+- **App:** `apps/web` (`pnpm --filter @food-marketplace/web dev`)
+
 ## Layout
 
 | Path                    | Purpose                                                      |
