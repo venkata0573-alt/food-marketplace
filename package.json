@@ -20,6 +20,7 @@
     "release": "pnpm build && changeset publish"
   },
   "devDependencies": {
+    "@food-marketplace/config": "workspace:*",
     "@food-marketplace/shared-types": "workspace:*",
     "@changesets/cli": "^2.27.12",
     "@commitlint/cli": "^19.8.0",

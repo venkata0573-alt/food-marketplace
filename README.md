@@ -1,18 +1,27 @@
 # Food marketplace monorepo
 
-Production two-sided food marketplace — **Layer 0: repository and Git governance**.
+Production two-sided food marketplace — **Layer 0** (Git governance) and **Layer 1** (environments & secrets).
+
+## Layer 1 — Environments & secrets
+
+Four environments: **local**, **preview** (per-PR), **staging**, **production**. Each has its own database and Stripe keys. Production credentials never load on developer machines (enforced in `@food-marketplace/config/env`).
+
+- **Docs:** [docs/environments-and-secrets.md](docs/environments-and-secrets.md)
+- **Boot validation:** `validateEnvAtBoot()` / `loadServerEnv()` / `loadClientEnv()` in `packages/config/src/env.ts`
+- **Client bundle rule:** ESLint `food-marketplace/no-server-env-in-client` — non-`NEXT_PUBLIC_` `process.env` in `"use client"` files is a **lint error** (fails CI / build)
+- **Secrets:** Vercel environment variables + Supabase Vault (see docs); `.env.example` only in git
 
 ## Layout
 
-| Path                    | Purpose                               |
-| ----------------------- | ------------------------------------- |
-| `apps/web`              | Customer-facing app (stub)            |
-| `apps/admin`            | Operations / vendor admin app (stub)  |
-| `packages/db`           | Database schema and access (stub)     |
-| `packages/ui`           | Shared UI (stub)                      |
-| `packages/config`       | Shared ESLint / TypeScript presets    |
-| `packages/shared-types` | Cross-package TypeScript types        |
-| `packages/shared`       | Sensitive shared modules (`authz.ts`) |
+| Path                    | Purpose                                                      |
+| ----------------------- | ------------------------------------------------------------ |
+| `apps/web`              | Customer-facing app (stub)                                   |
+| `apps/admin`            | Operations / vendor admin app (stub)                         |
+| `packages/db`           | Database schema and access (stub)                            |
+| `packages/ui`           | Shared UI (stub)                                             |
+| `packages/config`       | Shared TS presets, **Zod env validation**, ESLint env plugin |
+| `packages/shared-types` | Cross-package TypeScript types                               |
+| `packages/shared`       | Sensitive shared modules (`authz.ts`)                        |
 
 ## Development
 
@@ -42,7 +51,7 @@ Install [gitleaks](https://github.com/gitleaks/gitleaks) locally for pre-commit 
 
 ## Environment
 
-Copy `.env.example` to a local env file (e.g. `.env.local`). **Never commit `.env` files** — they are gitignored.
+Copy root or app `.env.example` to `.env.local`. **Never commit `.env` files.** Production/staging values live in Vercel only.
 
 ## GitHub
 

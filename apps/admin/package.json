@@ -4,11 +4,16 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "node -e \"process.exit(0)\"",
+    "validate-env": "tsx scripts/validate-env.ts",
+    "build": "pnpm validate-env && node -e \"process.exit(0)\"",
     "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@food-marketplace/config": "workspace:*"
   },
   "devDependencies": {
     "@food-marketplace/config": "workspace:*",
+    "tsx": "^4.19.3",
     "typescript": "^5.8.2"
   }
 }

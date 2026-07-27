@@ -1,0 +1,5 @@
+title = "food-marketplace gitleaks"
+
+[allowlist]
+description = "Stripe-shaped env placeholders in automated tests (not real secrets)"
+paths = ['''(?i)tests/''']

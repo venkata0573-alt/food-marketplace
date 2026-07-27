@@ -26,6 +26,13 @@ jobs:
   quality:
     name: Lint, typecheck, test
     runs-on: ubuntu-latest
+    env:
+      APP_ENV: local
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:54322/postgres
+      STRIPE_SECRET_KEY: sk_test_ci_secret
+      NEXT_PUBLIC_APP_ENV: local
+      NEXT_PUBLIC_APP_URL: http://localhost:3000
+      NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: pk_test_ci_publishable
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -45,3 +52,7 @@ jobs:
         run: pnpm typecheck
       - name: Unit tests
         run: pnpm test
+      - name: Env boot validation (apps)
+        run: |
+          pnpm --filter @food-marketplace/web validate-env
+          pnpm --filter @food-marketplace/admin validate-env

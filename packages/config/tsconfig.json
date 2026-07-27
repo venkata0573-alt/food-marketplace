@@ -1,8 +1,6 @@
 {
-  "extends": "./tsconfig/base.json",
+  "extends": "./tsconfig.build.json",
   "compilerOptions": {
     "noEmit": true
-  },
-  "include": ["."],
-  "exclude": ["node_modules", "dist"]
+  }
 }
