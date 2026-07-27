@@ -101,6 +101,13 @@ export default tseslint.config(
   {
     files: ['apps/web/src/server/repositories/**/*.{ts,tsx}'],
     rules: {
+      'no-restricted-syntax': [
+        'error',
+        {
+          selector: 'Literal[value=/\\bOFFSET\\b/i]',
+          message: 'OFFSET pagination is banned — use cursor/keyset pagination.',
+        },
+      ],
       'no-restricted-imports': [
         'error',
         {

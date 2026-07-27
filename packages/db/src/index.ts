@@ -1,5 +1,10 @@
 export { getDatabaseUrl, runMigrations, withClient } from './client.js';
 export type { Client } from 'pg';
+export {
+  collectSeqScansOnLargeTables,
+  QueryLatencyBudgetError,
+  timedQuery,
+} from './query/timed-query.js';
 export { decrementBatchQuantity } from './inventory/decrement-batch.js';
 export { listMigrationPairs, runLastMigrationDown, runMigrationsUp } from './migrate/runner.js';
 export { schema } from './schema/index.js';

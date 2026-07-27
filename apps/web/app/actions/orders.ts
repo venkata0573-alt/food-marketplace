@@ -2,6 +2,7 @@
 
 import { mapServiceErrorToStatus, publicErrorBody } from '@food-marketplace/domain';
 import { guardStateChangingRequest } from '@food-marketplace/auth/server';
+import { revalidateTag } from 'next/cache';
 import { headers, cookies } from 'next/headers';
 
 import { runWithServices } from '../../src/server/context';
@@ -54,6 +55,9 @@ export async function createOrderAction(
       body: publicErrorBody(result.error),
     };
   }
+
+  revalidateTag('browse-feed');
+  revalidateTag('dish-listings');
 
   return { ok: true, orderId: result.value.orderId };
 }

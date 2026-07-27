@@ -1,6 +1,7 @@
 import { withClient } from '../../db/with-client';
 import { Inngest } from 'inngest';
 
+import { processDishImageUpload, type ImageProcessPayload } from '../image-processing';
 import { createStripeWebhookEventRepository } from '../../repositories/stripe-webhook.repository';
 import type { StripeEventPayload } from '../../services/stripe-webhook.service';
 
@@ -41,7 +42,10 @@ export const inngestFunctions = [
   inngest.createFunction(
     { id: 'process-uploaded-image', retries: 5 },
     { event: 'image/process' },
-    async () => {},
+    async ({ event }) => {
+      const payload = event.data as ImageProcessPayload;
+      await processDishImageUpload(payload);
+    },
   ),
 ];
 

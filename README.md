@@ -48,6 +48,13 @@ Next.js App Router (server-first), ESLint layer boundaries (`routes → services
 - **Docs:** [docs/backend-architecture.md](docs/backend-architecture.md)
 - **App:** `apps/web` (`pnpm --filter @food-marketplace/web dev`)
 
+## Layer 7 — Performance & latency budget
+
+Hard CI gates for Web Vitals, API latency, bundle size, and SQL round-trips. PgBouncer transaction pooling, Redis tag cache, cursor pagination (no OFFSET), ISR browse feed, static marketing, image processing queue.
+
+- **Docs:** [docs/performance-and-latency-budget.md](docs/performance-and-latency-budget.md)
+- **Checks:** `pnpm perf:check`, `node scripts/perf/check-bundle-budget.mjs`
+
 ## Layout
 
 | Path                    | Purpose                                                      |

@@ -1,19 +1,20 @@
 import type { Metadata } from 'next';
-
-import { runWithServices } from '../src/server/context';
+import Link from 'next/link';
 
 export const metadata: Metadata = {
-  title: 'Food Marketplace',
+  title: 'Food Marketplace — Home',
+  description: 'Order from local chefs. Fresh food, delivered.',
 };
 
-export const dynamic = 'force-dynamic';
-
-export default async function HomePage() {
-  const dishCount = await runWithServices((services) => services.catalog.getFeaturedDishCount());
+/** Marketing landing — static, no database work at request time. */
+export default function MarketingHomePage() {
   return (
     <main>
       <h1>Food Marketplace</h1>
-      <p>Server-first catalog read ({dishCount} active dishes).</p>
+      <p>Discover chefs near you and order fresh meals for delivery.</p>
+      <p>
+        <Link href="/browse">Browse dishes</Link>
+      </p>
     </main>
   );
 }

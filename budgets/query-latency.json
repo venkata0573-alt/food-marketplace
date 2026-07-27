@@ -1,0 +1,4 @@
+{
+  "description": "Any single database round-trip over this threshold is treated as a bug.",
+  "maxQueryMs": 100
+}

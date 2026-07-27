@@ -59,4 +59,12 @@ jobs:
           pnpm --filter @food-marketplace/web validate-env
           pnpm --filter @food-marketplace/admin validate-env
       - name: Next.js production build (web)
-        run: pnpm --filter @food-marketplace/web build
+        run: |
+          set -o pipefail
+          pnpm --filter @food-marketplace/web build 2>&1 | tee /tmp/next-build.log
+      - name: Performance budgets (vitals + API harness)
+        run: pnpm perf:check
+      - name: Bundle size budget
+        run: |
+          SHARED=$(grep -Eo 'First Load JS shared by all[[:space:]]+[0-9.]+' /tmp/next-build.log | awk '{print $NF}')
+          FIRST_LOAD_JS_SHARED_KB="$SHARED" SKIP_BUNDLE_REBUILD=1 node scripts/perf/check-bundle-budget.mjs

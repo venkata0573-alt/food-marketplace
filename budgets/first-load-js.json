@@ -1,0 +1,4 @@
+{
+  "description": "Max gzipped first-load JS for customer app (shared + page).",
+  "maxGzipKb": 180
+}

@@ -1,0 +1,7 @@
+{
+  "description": "Hard CI gates — lab p75 unless noted (Lighthouse).",
+  "ttfbMsP75": 200,
+  "lcpMsP75": 2000,
+  "inpMsP75": 200,
+  "clsMax": 0.1
+}

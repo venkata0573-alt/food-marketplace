@@ -10,6 +10,8 @@
 
 Business logic never lives in route files — they delegate to **services** via `runWithServices()`.
 
+**Edge middleware (Layer 7):** locale + session cookie presence only — no database or CSRF in Edge (CSRF on Server Actions / Node API helpers).
+
 ## Layering (ESLint enforced)
 
 ```

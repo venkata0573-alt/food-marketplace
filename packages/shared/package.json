@@ -23,6 +23,14 @@
     "./pg-admin-audit": {
       "types": "./pg-admin-audit.ts",
       "default": "./pg-admin-audit.ts"
+    },
+    "./cursor-pagination": {
+      "types": "./cursor-pagination.ts",
+      "default": "./cursor-pagination.ts"
+    },
+    "./dataloader": {
+      "types": "./dataloader.ts",
+      "default": "./dataloader.ts"
     }
   },
   "scripts": {
@@ -30,7 +38,8 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "pg": "^8.14.1"
+    "pg": "^8.14.1",
+    "zod": "^3.24.2"
   },
   "devDependencies": {
     "@food-marketplace/config": "workspace:*",
