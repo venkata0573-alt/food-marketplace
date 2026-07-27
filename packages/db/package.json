@@ -7,14 +7,25 @@
     ".": {
       "types": "./src/index.ts",
       "default": "./src/index.ts"
+    },
+    "./seed/plan": {
+      "types": "./src/seed/plan.ts",
+      "default": "./src/seed/plan.ts"
     }
   },
   "scripts": {
     "build": "tsc --project tsconfig.build.json",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "migrate": "tsx scripts/migrate.ts",
+    "seed": "tsx scripts/migrate.ts && tsx scripts/seed.ts"
+  },
+  "dependencies": {
+    "pg": "^8.14.1"
   },
   "devDependencies": {
     "@food-marketplace/config": "workspace:*",
+    "@types/pg": "^8.11.11",
+    "tsx": "^4.19.3",
     "typescript": "^5.8.2"
   }
 }

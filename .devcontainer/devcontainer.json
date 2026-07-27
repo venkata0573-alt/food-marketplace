@@ -1,0 +1,40 @@
+{
+  "name": "Food Marketplace",
+  "dockerComposeFile": ["../docker-compose.yml", "docker-compose.yml"],
+  "service": "dev",
+  "workspaceFolder": "/workspace",
+  "features": {
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "20.18.0",
+      "nodeGypDependencies": true,
+      "installYarnUsingApt": false
+    },
+    "ghcr.io/devcontainers/features/common-utils:2": {
+      "installZsh": true,
+      "upgradePackages": false
+    }
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": ["dbaeumer.vscode-eslint", "esbenp.prettier-vscode"]
+    }
+  },
+  "postCreateCommand": "corepack enable && corepack prepare pnpm@9.15.9 --activate && pnpm install",
+  "forwardPorts": [3000, 3001, 54322, 6379, 8025, 9000, 9001],
+  "portsAttributes": {
+    "8025": { "label": "Mailpit UI" },
+    "9001": { "label": "MinIO Console" },
+    "54322": { "label": "Postgres" }
+  },
+  "remoteEnv": {
+    "APP_ENV": "local",
+    "DATABASE_URL": "postgresql://postgres:postgres@postgres:5432/food_marketplace",
+    "REDIS_URL": "redis://redis:6379",
+    "S3_ENDPOINT": "http://minio:9000",
+    "S3_BUCKET": "food-photos",
+    "S3_ACCESS_KEY_ID": "minioadmin",
+    "S3_SECRET_ACCESS_KEY": "minioadmin",
+    "SMTP_HOST": "mailpit",
+    "SMTP_PORT": "1025"
+  }
+}

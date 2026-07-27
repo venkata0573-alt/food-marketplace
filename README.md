@@ -11,6 +11,13 @@ Four environments: **local**, **preview** (per-PR), **staging**, **production**.
 - **Client bundle rule:** ESLint `food-marketplace/no-server-env-in-client` — non-`NEXT_PUBLIC_` `process.env` in `"use client"` files is a **lint error** (fails CI / build)
 - **Secrets:** Vercel environment variables + Supabase Vault (see docs); `.env.example` only in git
 
+## Layer 2 — Sandbox & local isolation
+
+Docker Compose local stack (Postgres, Redis, MinIO, Mailpit, Stripe CLI), **`pnpm dev:seed`** deterministic data, and Dev Container config. **No production data on developer machines.**
+
+- **Docs:** [docs/sandbox-and-local-isolation.md](docs/sandbox-and-local-isolation.md)
+- **Commands:** `pnpm dev:up`, `pnpm dev:seed`, `pnpm dev:down`
+
 ## Layout
 
 | Path                    | Purpose                                                      |

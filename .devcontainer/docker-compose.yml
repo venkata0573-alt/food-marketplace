@@ -1,0 +1,19 @@
+services:
+  dev:
+    image: mcr.microsoft.com/devcontainers/javascript-node:1-20-bookworm
+    container_name: food-marketplace-dev
+    working_dir: /workspace
+    volumes:
+      - ..:/workspace:cached
+    command: sleep infinity
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/food_marketplace
+      REDIS_URL: redis://redis:6379
+      S3_ENDPOINT: http://minio:9000
+      SMTP_HOST: mailpit
+      SMTP_PORT: '1025'
