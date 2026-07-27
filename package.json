@@ -18,12 +18,15 @@
     "dev:up": "docker compose up -d",
     "dev:down": "docker compose down",
     "dev:seed": "pnpm --filter @food-marketplace/db seed",
+    "jobs:retention": "pnpm --filter @food-marketplace/jobs retention:all",
     "changeset": "changeset",
     "version-packages": "changeset version",
     "release": "pnpm build && changeset publish"
   },
   "devDependencies": {
     "@food-marketplace/config": "workspace:*",
+    "@food-marketplace/auth": "workspace:*",
+    "@food-marketplace/shared": "workspace:*",
     "@food-marketplace/db": "workspace:*",
     "@food-marketplace/shared-types": "workspace:*",
     "@changesets/cli": "^2.27.12",

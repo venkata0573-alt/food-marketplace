@@ -2,11 +2,16 @@ import { ALLERGEN_TAXONOMY, buildSeedPlan, DETERMINISTIC_SEED } from '../src/see
 import { runMigrations, withClient } from '../src/client.js';
 import type { Client } from 'pg';
 
+const PII_KEY = process.env.LOCAL_PII_ENCRYPTION_KEY ?? 'local-dev-only-pii-key';
+
 async function truncateSandbox(client: Client): Promise<void> {
   await client.query(`
     TRUNCATE TABLE
       order_items,
       orders,
+      inventory_batches,
+      idempotency_keys,
+      audit_log,
       dish_allergens,
       dishes,
       customers,
@@ -14,6 +19,14 @@ async function truncateSandbox(client: Client): Promise<void> {
       allergens
     RESTART IDENTITY CASCADE;
   `);
+}
+
+async function encryptEmail(client: Client, email: string): Promise<string> {
+  const result = await client.query<{ encrypted: string }>(
+    `SELECT encrypt_sensitive($1, $2) AS encrypted`,
+    [email, PII_KEY],
+  );
+  return result.rows[0]!.encrypted;
 }
 
 async function main(): Promise<void> {
@@ -36,10 +49,14 @@ async function main(): Promise<void> {
     );
     const allergenIdByCode = new Map(allergenRows.rows.map((row) => [row.code, row.id]));
 
+    let chefIndex = 0;
     for (const chef of plan.chefs) {
+      chefIndex += 1;
+      const ownerUserId = chefIndex === 1 ? '11111111-1111-4111-8111-111111111111' : null;
       await client.query(
-        `INSERT INTO chefs (id, slug, display_name, bio, city) VALUES ($1, $2, $3, $4, $5)`,
-        [chef.id, chef.slug, chef.displayName, chef.bio, chef.city],
+        `INSERT INTO chefs (id, owner_user_id, slug, display_name, bio, city)
+         VALUES ($1, $2, $3, $4, $5, $6)`,
+        [chef.id, ownerUserId, chef.slug, chef.displayName, chef.bio, chef.city],
       );
     }
 
@@ -48,6 +65,11 @@ async function main(): Promise<void> {
         `INSERT INTO dishes (id, chef_id, slug, name, description, price_cents)
          VALUES ($1, $2, $3, $4, $5, $6)`,
         [dish.id, dish.chefId, dish.slug, dish.name, dish.description, dish.priceCents],
+      );
+      await client.query(
+        `INSERT INTO inventory_batches (dish_id, remaining_quantity, version)
+         VALUES ($1, 25, 1)`,
+        [dish.id],
       );
       for (const code of dish.allergenCodes) {
         const allergenId = allergenIdByCode.get(code);
@@ -60,18 +82,27 @@ async function main(): Promise<void> {
       }
     }
 
-    const customerIds = new Set<string>();
-    for (const order of plan.orders) {
-      customerIds.add(order.customerId);
-    }
+    const customerAuthById = new Map<string, string>();
     let customerIndex = 0;
-    for (const customerId of Array.from(customerIds)) {
+    for (const order of plan.orders) {
+      if (!customerAuthById.has(order.customerId)) {
+        customerIndex += 1;
+        customerAuthById.set(
+          order.customerId,
+          customerIndex === 1 ? '22222222-2222-4222-8222-222222222222' : order.customerId,
+        );
+      }
+    }
+
+    customerIndex = 0;
+    for (const [customerId, authUserId] of customerAuthById.entries()) {
       customerIndex += 1;
-      await client.query(`INSERT INTO customers (id, email, display_name) VALUES ($1, $2, $3)`, [
-        customerId,
-        `customer-${String(customerIndex).padStart(3, '0')}@sandbox.local`,
-        `Sandbox Customer ${customerIndex}`,
-      ]);
+      const email = `customer-${String(customerIndex).padStart(3, '0')}@sandbox.local`;
+      const encrypted = await encryptEmail(client, email);
+      await client.query(
+        `INSERT INTO customers (id, auth_user_id, email_encrypted, display_name) VALUES ($1, $2, $3, $4)`,
+        [customerId, authUserId, encrypted, `Sandbox Customer ${customerIndex}`],
+      );
     }
 
     for (const order of plan.orders) {
@@ -99,6 +130,7 @@ async function main(): Promise<void> {
       UNION ALL SELECT 'dishes', COUNT(*)::text FROM dishes
       UNION ALL SELECT 'allergens', COUNT(*)::text FROM allergens
       UNION ALL SELECT 'orders', COUNT(*)::text FROM orders
+      UNION ALL SELECT 'inventory_batches', COUNT(*)::text FROM inventory_batches
     `);
 
     console.log(`Seed complete (deterministic seed=${DETERMINISTIC_SEED}):`);

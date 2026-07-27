@@ -18,6 +18,29 @@ Docker Compose local stack (Postgres, Redis, MinIO, Mailpit, Stripe CLI), **`pnp
 - **Docs:** [docs/sandbox-and-local-isolation.md](docs/sandbox-and-local-isolation.md)
 - **Commands:** `pnpm dev:up`, `pnpm dev:seed`, `pnpm dev:down`
 
+## Layer 3 — Database & data governance
+
+Postgres via **Drizzle Kit** (schema in code, paired SQL migrations, RLS on every table, default deny). Money in integer cents; `timestamptz` UTC; optimistic inventory decrements; idempotency keys; soft deletes; PII comments + pgcrypto; append-only audit log.
+
+- **Docs:** [docs/database-governance.md](docs/database-governance.md)
+- **Migrations:** `packages/db/drizzle/migrations/*.up.sql` + required `*.down.sql`
+- **RLS tests:** `RUN_DB_INTEGRATION=1 pnpm test` (Postgres must be running / seeded)
+
+## Layer 4 — Authentication & sessions
+
+Supabase Auth (email + phone OTP, Google/Apple OAuth), `__Host-` HttpOnly session cookies, rotating refresh with reuse detection, CSRF double-submit + Origin checks, cookie consent, device revocation, step-up auth, admin TOTP, OTP rate limits + Turnstile.
+
+- **Docs:** [docs/authentication-and-sessions.md](docs/authentication-and-sessions.md)
+- **Package:** `@food-marketplace/auth` (+ `/server`, `/react`)
+- **Supabase:** [supabase/config.toml](supabase/config.toml)
+
+## Layer 5 — Authorization & governance
+
+RBAC (`customer` → `superadmin`) in [`packages/shared/authz.ts`](packages/shared/authz.ts) via `can(user, action, resource)`. JWT `app_role` re-verified against `user_roles` on privileged ops. Admin audit + destructive reasons, retention jobs, DSAR export/delete.
+
+- **Docs:** [docs/authorization-and-governance.md](docs/authorization-and-governance.md)
+- **Jobs:** `pnpm jobs:retention`
+
 ## Layout
 
 | Path                    | Purpose                                                      |

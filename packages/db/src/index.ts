@@ -1,4 +1,14 @@
 export { getDatabaseUrl, runMigrations, withClient } from './client.js';
+export { decrementBatchQuantity } from './inventory/decrement-batch.js';
+export { listMigrationPairs, runLastMigrationDown, runMigrationsUp } from './migrate/runner.js';
+export { schema } from './schema/index.js';
+export { PII_COLUMN_COMMENTS } from './schema/pii-comments.js';
+export {
+  countRows,
+  verifyPairedDownMigrations,
+  withRlsContext,
+  type AppRole,
+} from './testing/rls-session.js';
 export {
   ALLERGEN_TAXONOMY,
   buildSeedPlan,

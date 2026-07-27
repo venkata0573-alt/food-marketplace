@@ -16,15 +16,21 @@
   "scripts": {
     "build": "tsc --project tsconfig.build.json",
     "typecheck": "tsc --noEmit",
+    "db:generate": "drizzle-kit generate",
+    "db:check": "drizzle-kit check",
     "migrate": "tsx scripts/migrate.ts",
-    "seed": "tsx scripts/migrate.ts && tsx scripts/seed.ts"
+    "migrate:down": "tsx scripts/migrate-down.ts",
+    "seed": "tsx scripts/migrate.ts && tsx scripts/seed.ts",
+    "verify:migrations": "bash ../../scripts/verify-migration-pairs.sh"
   },
   "dependencies": {
+    "drizzle-orm": "^0.40.0",
     "pg": "^8.14.1"
   },
   "devDependencies": {
     "@food-marketplace/config": "workspace:*",
     "@types/pg": "^8.11.11",
+    "drizzle-kit": "^0.30.5",
     "tsx": "^4.19.3",
     "typescript": "^5.8.2"
   }

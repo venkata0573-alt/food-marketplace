@@ -1,0 +1,22 @@
+{
+  "name": "@food-marketplace/jobs",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "retention:orders": "tsx src/retention/orders.ts",
+    "retention:auth-logs": "tsx src/retention/auth-logs.ts",
+    "retention:identity-docs": "tsx src/retention/identity-documents.ts",
+    "retention:all": "pnpm retention:orders && pnpm retention:auth-logs && pnpm retention:identity-docs",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@food-marketplace/db": "workspace:*",
+    "pg": "^8.14.1"
+  },
+  "devDependencies": {
+    "@types/pg": "^8.11.11",
+    "tsx": "^4.19.3",
+    "typescript": "^5.8.2"
+  }
+}

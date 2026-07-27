@@ -50,6 +50,8 @@ jobs:
         run: pnpm format
       - name: Typecheck
         run: pnpm typecheck
+      - name: Verify migration down pairs
+        run: pnpm --filter @food-marketplace/db verify:migrations
       - name: Unit tests
         run: pnpm test
       - name: Env boot validation (apps)

@@ -7,14 +7,34 @@
     "./authz": {
       "types": "./authz.ts",
       "default": "./authz.ts"
+    },
+    "./admin-audit": {
+      "types": "./admin-audit.ts",
+      "default": "./admin-audit.ts"
+    },
+    "./governance-store": {
+      "types": "./governance-store.ts",
+      "default": "./governance-store.ts"
+    },
+    "./dsar-handlers": {
+      "types": "./dsar-handlers.ts",
+      "default": "./dsar-handlers.ts"
+    },
+    "./pg-admin-audit": {
+      "types": "./pg-admin-audit.ts",
+      "default": "./pg-admin-audit.ts"
     }
   },
   "scripts": {
     "build": "node -e \"process.exit(0)\"",
     "typecheck": "tsc --noEmit"
   },
+  "dependencies": {
+    "pg": "^8.14.1"
+  },
   "devDependencies": {
     "@food-marketplace/config": "workspace:*",
+    "@types/pg": "^8.11.11",
     "typescript": "^5.8.2"
   }
 }
