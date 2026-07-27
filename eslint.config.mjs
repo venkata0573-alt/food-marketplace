@@ -14,6 +14,7 @@ export default tseslint.config(
       '**/coverage/**',
       'tests/fixtures/**',
       'apps/web/next-env.d.ts',
+      'load/k6/**',
     ],
   },
   eslint.configs.recommended,

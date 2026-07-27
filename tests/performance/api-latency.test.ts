@@ -3,7 +3,7 @@ import { join } from 'node:path';
 
 import { describe, expect, it } from 'vitest';
 
-import { GET } from '../../apps/web/app/api/health/route';
+import { GET } from '../../apps/web/app/health/live/route';
 
 function percentile(values: number[], p: number): number {
   const sorted = [...values].sort((a, b) => a - b);

@@ -16,6 +16,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "perf:check": "node scripts/perf/check-no-offset.mjs && vitest run tests/performance",
+    "load:k6": "k6 run load/k6/dinner-burst.js",
     "dev:up": "docker compose up -d",
     "dev:down": "docker compose down",
     "dev:seed": "pnpm --filter @food-marketplace/db seed",
@@ -27,6 +28,8 @@
   "devDependencies": {
     "@food-marketplace/config": "workspace:*",
     "@food-marketplace/domain": "workspace:*",
+    "@food-marketplace/rate-limit": "workspace:*",
+    "@food-marketplace/resilience": "workspace:*",
     "@food-marketplace/auth": "workspace:*",
     "@food-marketplace/shared": "workspace:*",
     "@food-marketplace/db": "workspace:*",

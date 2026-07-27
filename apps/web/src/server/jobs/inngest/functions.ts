@@ -1,6 +1,7 @@
 import { withClient } from '../../db/with-client';
 import { Inngest } from 'inngest';
 
+import { enqueueWithReconciliation } from '../queue-fallback';
 import { processDishImageUpload, type ImageProcessPayload } from '../image-processing';
 import { createStripeWebhookEventRepository } from '../../repositories/stripe-webhook.repository';
 import type { StripeEventPayload } from '../../services/stripe-webhook.service';
@@ -51,9 +52,14 @@ export const inngestFunctions = [
 
 export class InngestStripeWebhookQueue {
   async enqueueStripeEvent(payload: StripeEventPayload): Promise<void> {
-    await inngest.send({
-      name: 'stripe/webhook.received',
-      data: payload,
-    });
+    await enqueueWithReconciliation(
+      async () => {
+        await inngest.send({
+          name: 'stripe/webhook.received',
+          data: payload,
+        });
+      },
+      { jobName: 'stripe/webhook.received', payload },
+    );
   }
 }

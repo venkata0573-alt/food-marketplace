@@ -3,6 +3,7 @@
 import { mapServiceErrorToStatus, publicErrorBody } from '@food-marketplace/domain';
 import { guardStateChangingRequest } from '@food-marketplace/auth/server';
 import { revalidateTag } from 'next/cache';
+import { enforceRateLimits } from '@food-marketplace/rate-limit';
 import { headers, cookies } from 'next/headers';
 
 import { runWithServices } from '../../src/server/context';
@@ -15,6 +16,24 @@ export async function createOrderAction(
   | { ok: false; status: number; body: ReturnType<typeof publicErrorBody> }
 > {
   const headerStore = await headers();
+  const ip = headerStore.get('x-forwarded-for')?.split(',')[0]?.trim() ?? '127.0.0.1';
+  const rate = await enforceRateLimits({
+    ip,
+    userId: '22222222-2222-4222-8222-222222222222',
+    endpointKey: 'endpointCheckout',
+  });
+  if (rate && !rate.allowed) {
+    return {
+      ok: false,
+      status: 429,
+      body: publicErrorBody({
+        code: 'RATE_LIMITED',
+        message: 'rate limited',
+        publicMessage: 'Too many requests — try again shortly',
+      }),
+    };
+  }
+
   const cookieStore = await cookies();
   guardStateChangingRequest(
     {

@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 
-/** Lightweight health probe for API latency budget harness (no database). */
+import { cacheControl } from '../../../src/server/http/cache-control';
+
+/** Back-compat alias for perf harness — prefer `/health/live`. */
 export async function GET() {
-  return NextResponse.json({ ok: true }, { status: 200 });
+  return cacheControl(NextResponse.json({ ok: true, status: 'live' }, { status: 200 }), 'no-store');
 }

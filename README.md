@@ -55,6 +55,13 @@ Hard CI gates for Web Vitals, API latency, bundle size, and SQL round-trips. PgB
 - **Docs:** [docs/performance-and-latency-budget.md](docs/performance-and-latency-budget.md)
 - **Checks:** `pnpm perf:check`, `node scripts/perf/check-bundle-budget.mjs`
 
+## Layer 8 — Traffic, resilience & scale
+
+CDN cache headers, Cloudflare WAF/DDoS, Redis sliding-window rate limits (429 + Retry-After), circuit breakers (Stripe/Twilio/Mapbox), graceful Redis/queue degradation, k6 dinner burst, `/health/live` + `/health/ready`.
+
+- **Docs:** [docs/traffic-resilience-scale.md](docs/traffic-resilience-scale.md)
+- **Load test:** `k6 run load/k6/dinner-burst.js`
+
 ## Layout
 
 | Path                    | Purpose                                                      |
