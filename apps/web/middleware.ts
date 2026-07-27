@@ -1,25 +1,26 @@
+import createMiddleware from 'next-intl/middleware';
 import { NextResponse, type NextRequest } from 'next/server';
 
+import { routing } from './i18n/routing';
 import { cacheControlForPath } from './src/server/http/cache-control';
 
-const LOCALE_COOKIE = 'fm-locale';
-/** Session presence only — no validation or database I/O in Edge. */
 const ACCESS_COOKIE = '__Host-fm-access';
+const intlMiddleware = createMiddleware(routing);
 
 export function middleware(request: NextRequest) {
-  const locale =
-    request.cookies.get(LOCALE_COOKIE)?.value ??
-    request.headers.get('accept-language')?.split(',')[0]?.split('-')[0] ??
-    'en';
+  const pathname = request.nextUrl.pathname;
+  if (pathname.startsWith('/api') || pathname.startsWith('/health')) {
+    return NextResponse.next();
+  }
 
-  const response = NextResponse.next();
-  response.headers.set('x-fm-locale', locale);
+  const response = intlMiddleware(request);
+
   response.headers.set(
     'x-fm-session',
     request.cookies.get(ACCESS_COOKIE) ? 'present' : 'anonymous',
   );
 
-  const policy = cacheControlForPath(request.nextUrl.pathname);
+  const policy = cacheControlForPath(pathname);
   const value =
     policy === 'static-immutable'
       ? 'public, max-age=31536000, immutable'

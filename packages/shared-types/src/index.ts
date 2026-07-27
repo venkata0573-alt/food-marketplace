@@ -1,6 +1,8 @@
-/** Shared domain types — expanded in later layers. */
-export type MarketplaceId = string & { readonly __brand: 'MarketplaceId' };
-
-export function marketplaceId(value: string): MarketplaceId {
-  return value as MarketplaceId;
-}
+export type { MarketplaceId } from './ids';
+export { marketplaceId } from './ids';
+export {
+  createOrderInputSchema,
+  createOrderLineSchema,
+  type CreateOrderInput,
+  type CreateOrderLineInput,
+} from './order.schemas';

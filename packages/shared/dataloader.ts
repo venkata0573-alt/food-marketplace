@@ -39,7 +39,9 @@ export class DataLoader<K, V> {
         return;
       }
       const result = results[index];
-      if (result instanceof Error) {
+      if (result === undefined) {
+        handlers.reject(new Error('missing batch result'));
+      } else if (result instanceof Error) {
         handlers.reject(result);
       } else {
         handlers.resolve(result);

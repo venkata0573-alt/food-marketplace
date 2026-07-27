@@ -1,0 +1,22 @@
+{
+  "Home": {
+    "title": "美食市集",
+    "lead": "发现附近的厨师，订购新鲜配送到家的餐点。",
+    "browse": "浏览菜品",
+    "cart": "购物车"
+  },
+  "Browse": {
+    "title": "浏览",
+    "emptyTitle": "暂无菜品",
+    "emptyDescription": "您附近的厨师尚未上架餐点，请稍后再来。",
+    "next": "下一页"
+  },
+  "Cart": {
+    "title": "购物车",
+    "submit": "提交订单",
+    "items": "购物车中有 {count} 件商品"
+  },
+  "Checkout": {
+    "srInstructions": "请核对购物车并提交订单。必填项已标注。"
+  }
+}

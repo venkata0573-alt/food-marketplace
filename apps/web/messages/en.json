@@ -1,0 +1,22 @@
+{
+  "Home": {
+    "title": "Food Marketplace",
+    "lead": "Discover chefs near you and order fresh meals for delivery.",
+    "browse": "Browse dishes",
+    "cart": "Cart"
+  },
+  "Browse": {
+    "title": "Browse",
+    "emptyTitle": "No dishes yet",
+    "emptyDescription": "Chefs in your area haven't listed meals. Check back soon.",
+    "next": "Next page"
+  },
+  "Cart": {
+    "title": "Cart",
+    "submit": "Place order",
+    "items": "{count} items in cart"
+  },
+  "Checkout": {
+    "srInstructions": "Review your cart and place your order. Required fields are marked."
+  }
+}

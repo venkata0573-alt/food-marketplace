@@ -1,6 +1,13 @@
 {
-  "extends": "./tsconfig.build.json",
+  "extends": "@food-marketplace/config/tsconfig/base.json",
   "compilerOptions": {
-    "noEmit": true
-  }
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "noEmit": true,
+    "rootDir": "src"
+  },
+  "include": ["src/**/*.ts"]
 }

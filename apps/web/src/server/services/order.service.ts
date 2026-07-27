@@ -1,4 +1,5 @@
 import { err, ok, type Result } from '@food-marketplace/domain';
+import { findAllergenConflicts } from '@food-marketplace/shared/allergen-guard';
 
 import type { CreateOrderInput } from '../validation/order.schemas';
 import type { OrderRepository } from '../repositories/order.repository';
@@ -6,6 +7,8 @@ import type { OrderRepository } from '../repositories/order.repository';
 export interface CreateOrderContext {
   customerId: string;
   orderNumber: string;
+  /** Allergen codes the customer must avoid (profile or checkout attestation). */
+  customerAllergenCodes?: string[];
 }
 
 export interface OrderService {
@@ -31,6 +34,20 @@ export function createOrderService(repo: OrderRepository): OrderService {
         }
         if (dish.chefId !== input.chefId) {
           return err('VALIDATION', 'Items must belong to the selected chef.');
+        }
+      }
+
+      const allergenCodes = ctx.customerAllergenCodes ?? [];
+      if (allergenCodes.length > 0) {
+        const byDish = new Map(dishes.map((d) => [d.id, d.allergenCodes]));
+        const conflicts = findAllergenConflicts(byDish, allergenCodes);
+        if (conflicts.length > 0) {
+          return err(
+            'FORBIDDEN',
+            'Your order includes items that conflict with your allergen profile.',
+            'allergen conflict',
+            { conflicts },
+          );
         }
       }
 

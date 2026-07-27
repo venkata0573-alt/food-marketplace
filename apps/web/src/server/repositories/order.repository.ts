@@ -5,6 +5,7 @@ export interface DishQuoteRow {
   chefId: string;
   priceCents: number;
   deletedAt: string | null;
+  allergenCodes: string[];
 }
 
 export interface OrderRepository {
@@ -24,13 +25,26 @@ export function createOrderRepository(client: Client): OrderRepository {
       if (dishIds.length === 0) {
         return [];
       }
-      const result = await client.query<DishQuoteRow>(
-        `SELECT id, chef_id AS "chefId", price_cents AS "priceCents", deleted_at AS "deletedAt"
-         FROM dishes
-         WHERE id = ANY($1::uuid[])`,
+      const result = await client.query<DishQuoteRow & { allergenCodes: string[] | null }>(
+        `SELECT d.id,
+                d.chef_id AS "chefId",
+                d.price_cents AS "priceCents",
+                d.deleted_at AS "deletedAt",
+                COALESCE(
+                  array_agg(DISTINCT a.code) FILTER (WHERE a.code IS NOT NULL),
+                  '{}'
+                ) AS "allergenCodes"
+         FROM dishes d
+         LEFT JOIN dish_allergens da ON da.dish_id = d.id
+         LEFT JOIN allergens a ON a.id = da.allergen_id
+         WHERE d.id = ANY($1::uuid[])
+         GROUP BY d.id`,
         [dishIds],
       );
-      return result.rows;
+      return result.rows.map((row) => ({
+        ...row,
+        allergenCodes: row.allergenCodes ?? [],
+      }));
     },
     async createOrderDraft(params) {
       const order = await client.query<{ id: string }>(

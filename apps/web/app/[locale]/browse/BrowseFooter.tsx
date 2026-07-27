@@ -1,6 +1,6 @@
 'use client';
+// client-justification: below-the-fold footer is dynamically imported to reduce first-load JS.
 
-/** Below-the-fold UI — dynamically imported to keep first-load JS under budget. */
 export function BrowseFooter() {
   return (
     <footer>

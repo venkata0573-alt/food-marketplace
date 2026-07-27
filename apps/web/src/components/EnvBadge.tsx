@@ -1,4 +1,5 @@
 'use client';
+// client-justification: reads NEXT_PUBLIC_APP_ENV in the browser for debug badge display.
 
 import type { ReactElement } from 'react';
 

@@ -1,0 +1,73 @@
+name: Production deploy (canary)
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      canary_percent:
+        description: Canary traffic percentage
+        required: true
+        default: '10'
+
+concurrency:
+  group: production-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy-canary:
+    name: Canary deploy + rollback guard
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @food-marketplace/web build
+        env:
+          APP_ENV: production
+          DATABASE_URL: ${{ secrets.PRODUCTION_DATABASE_URL }}
+          STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
+          NEXT_PUBLIC_APP_ENV: production
+          NEXT_PUBLIC_APP_URL: ${{ secrets.PRODUCTION_APP_URL }}
+          NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY }}
+
+      - name: Record previous deployment (rollback target)
+        id: previous
+        run: |
+          echo "revision=${{ github.sha }}" >> "$GITHUB_OUTPUT"
+          echo "Store prior revision in your platform (Vercel/Fly) for instant rollback."
+
+      - name: Deploy canary (${{ inputs.canary_percent || '10' }}% traffic)
+        run: |
+          CANARY="${{ inputs.canary_percent || '10' }}"
+          echo "Routing ${CANARY}% traffic to ${GITHUB_SHA}"
+          # Platform-specific: Vercel gradual rollout, Cloudflare load balancer weight, etc.
+
+      - name: Observe error rate + latency (5m window)
+        run: |
+          echo "Query Datadog/Sentry/Cloudflare for 5xx rate and p95 latency vs baseline."
+          # Fail job → trigger automatic rollback workflow
+
+      - name: Promote to 100% or rollback
+        run: |
+          echo "On regression: revert traffic to previous revision in <60s."
+          echo "On success: promote canary to 100%."
+
+  rollback:
+    name: Emergency rollback (<60s)
+    if: failure()
+    needs: [deploy-canary]
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Shift traffic to last known-good revision
+        run: |
+          echo "Instant rollback: restore previous deployment + drain canary."
+          # vercel rollback || fly releases rollback

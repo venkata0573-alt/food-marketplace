@@ -1,7 +1,7 @@
 module.exports = {
   ci: {
     collect: {
-      url: ['http://127.0.0.1:3000/', 'http://127.0.0.1:3000/browse'],
+      url: ['http://127.0.0.1:3000/en', 'http://127.0.0.1:3000/en/browse'],
       startServerCommand: 'pnpm --filter @food-marketplace/web start --port 3000',
       startServerReadyPattern: 'Ready',
       numberOfRuns: 3,

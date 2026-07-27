@@ -1,0 +1,22 @@
+{
+  "Home": {
+    "title": "Mercado de comida",
+    "lead": "Descubre chefs cerca de ti y pide comidas frescas a domicilio.",
+    "browse": "Ver platos",
+    "cart": "Carrito"
+  },
+  "Browse": {
+    "title": "Explorar",
+    "emptyTitle": "Aún no hay platos",
+    "emptyDescription": "Los chefs de tu zona aún no publicaron comidas. Vuelve pronto.",
+    "next": "Siguiente página"
+  },
+  "Cart": {
+    "title": "Carrito",
+    "submit": "Realizar pedido",
+    "items": "{count} artículos en el carrito"
+  },
+  "Checkout": {
+    "srInstructions": "Revisa tu carrito y realiza el pedido. Los campos obligatorios están marcados."
+  }
+}

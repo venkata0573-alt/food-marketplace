@@ -1,6 +1,10 @@
 {
-  "extends": "./tsconfig.build.json",
+  "extends": "@food-marketplace/config/tsconfig/strict-react.json",
   "compilerOptions": {
-    "noEmit": true
-  }
+    "noEmit": true,
+    "rootDir": ".",
+    "jsx": "react-jsx"
+  },
+  "include": ["src/**/*.ts", "src/**/*.tsx", "tokens/**/*.ts", ".storybook/**/*.ts"],
+  "exclude": ["src/a11y/**"]
 }

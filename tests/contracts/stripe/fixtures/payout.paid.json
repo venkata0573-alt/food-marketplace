@@ -1,0 +1,16 @@
+{
+  "id": "evt_1N4examplePayoutPaid",
+  "object": "event",
+  "type": "payout.paid",
+  "livemode": false,
+  "created": 1710000100,
+  "data": {
+    "object": {
+      "id": "po_1N4examplePayoutPaid",
+      "object": "payout",
+      "amount": 50000,
+      "currency": "usd",
+      "status": "paid"
+    }
+  }
+}

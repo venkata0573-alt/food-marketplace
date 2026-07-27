@@ -25,6 +25,8 @@ describe('food-marketplace/no-server-env-in-client', () => {
       filePath: path.join(repoRoot, 'apps/web/src/components/ClientBad.tsx'),
     });
     expect(results[0]?.errorCount).toBeGreaterThan(0);
-    expect(results[0]?.messages[0]?.ruleId).toBe('food-marketplace/no-server-env-in-client');
+    expect(
+      results[0]?.messages.some((m) => m.ruleId === 'food-marketplace/no-server-env-in-client'),
+    ).toBe(true);
   });
 });

@@ -1,0 +1,18 @@
+.root {
+  padding: var(--fm-space-4);
+  border-radius: var(--fm-radius-lg);
+  border: 1px solid var(--fm-color-border);
+  background: var(--fm-color-background);
+  box-shadow: var(--fm-shadow-sm);
+}
+
+.title {
+  margin: 0 0 var(--fm-space-2);
+  font-size: var(--fm-text-lg);
+}
+
+.body {
+  margin: 0;
+  font-size: var(--fm-text-base);
+  color: var(--fm-color-foreground);
+}

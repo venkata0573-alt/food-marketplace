@@ -3,10 +3,17 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
+  "dependencies": {
+    "zod": "^3.24.2"
+  },
   "exports": {
     ".": {
       "types": "./src/index.ts",
       "default": "./src/index.ts"
+    },
+    "./order": {
+      "types": "./src/order.schemas.ts",
+      "default": "./src/order.schemas.ts"
     }
   },
   "scripts": {

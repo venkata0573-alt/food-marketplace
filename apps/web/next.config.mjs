@@ -1,4 +1,7 @@
 import bundleAnalyzer from '@next/bundle-analyzer';
+import createNextIntlPlugin from 'next-intl/plugin';
+
+const withNextIntl = createNextIntlPlugin('./i18n/request.ts');
 
 const withBundleAnalyzer = bundleAnalyzer({
   enabled: process.env.ANALYZE === 'true',
@@ -15,6 +18,8 @@ const nextConfig = {
     '@food-marketplace/rate-limit',
     '@food-marketplace/resilience',
     '@food-marketplace/shared',
+    '@food-marketplace/shared-types',
+    '@food-marketplace/ui',
   ],
   serverExternalPackages: ['pg', 'ioredis'],
   async headers() {
@@ -38,4 +43,4 @@ const nextConfig = {
   },
 };
 
-export default withBundleAnalyzer(nextConfig);
+export default withNextIntl(withBundleAnalyzer(nextConfig));

@@ -62,6 +62,28 @@ CDN cache headers, Cloudflare WAF/DDoS, Redis sliding-window rate limits (429 + 
 - **Docs:** [docs/traffic-resilience-scale.md](docs/traffic-resilience-scale.md)
 - **Load test:** `k6 run load/k6/dinner-burst.js`
 
+## Layer 9 — Frontend architecture
+
+Strict TS, RSC-first with justified `"use client"`, four async states, error boundaries + Sentry, optimistic cart/favorites, PWA offline queue, RHF + shared Zod.
+
+- **Docs:** [docs/frontend-architecture.md](docs/frontend-architecture.md)
+
+## Layer 10 — UI system
+
+Design tokens (no hardcoded hex/px in components), Storybook per component state, WCAG 2.2 AA gates (jsx-a11y + axe in CI), mobile-first 375px / 44px touch targets, **next-intl** (`en`, `es`, `zh`), dark mode + reduced motion via tokens.
+
+- **Docs:** [docs/ui-system.md](docs/ui-system.md)
+- **Storybook:** `pnpm --filter @food-marketplace/ui storybook`
+- **A11y tests:** `pnpm test:a11y`
+
+## Layer 11 — Testing & CI/CD
+
+Vitest unit + **80% packages coverage**, Postgres integration + **RLS suite**, Stripe **contract fixtures**, Playwright **five critical paths**, full PR CI (typecheck → lint → unit → integration → build → bundle → E2E → Lighthouse → gitleaks → audit), preview DB branch deploy, production **canary 10%** with rollback.
+
+- **Docs:** [docs/testing-cicd.md](docs/testing-cicd.md)
+- **Unit + coverage:** `pnpm test:coverage`
+- **E2E:** `E2E_TEST_MODE=1 E2E_TEST_TOKEN=local pnpm test:e2e`
+
 ## Layout
 
 | Path                    | Purpose                                                      |
@@ -69,7 +91,7 @@ CDN cache headers, Cloudflare WAF/DDoS, Redis sliding-window rate limits (429 + 
 | `apps/web`              | Customer-facing app (stub)                                   |
 | `apps/admin`            | Operations / vendor admin app (stub)                         |
 | `packages/db`           | Database schema and access (stub)                            |
-| `packages/ui`           | Shared UI (stub)                                             |
+| `packages/ui`           | Design tokens, primitives, Storybook                         |
 | `packages/config`       | Shared TS presets, **Zod env validation**, ESLint env plugin |
 | `packages/shared-types` | Cross-package TypeScript types                               |
 | `packages/shared`       | Sensitive shared modules (`authz.ts`)                        |

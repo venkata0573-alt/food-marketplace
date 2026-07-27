@@ -10,6 +10,18 @@ concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+env:
+  APP_ENV: local
+  DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:54322/food_marketplace
+  STRIPE_SECRET_KEY: sk_test_ci_secret
+  STRIPE_WEBHOOK_SECRET: whsec_ci_test_secret
+  NEXT_PUBLIC_APP_ENV: local
+  NEXT_PUBLIC_APP_URL: http://127.0.0.1:3000
+  NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: pk_test_ci_publishable
+  E2E_TEST_MODE: '1'
+  E2E_TEST_TOKEN: ci-e2e-token
+  PLAYWRIGHT_BASE_URL: http://127.0.0.1:3000
+
 jobs:
   gitleaks:
     name: Secret scan (gitleaks)
@@ -18,21 +30,13 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Run gitleaks
-        uses: gitleaks/gitleaks-action@v2
+      - uses: gitleaks/gitleaks-action@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  quality:
-    name: Lint, typecheck, test
+  audit:
+    name: Dependency audit (pnpm)
     runs-on: ubuntu-latest
-    env:
-      APP_ENV: local
-      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:54322/postgres
-      STRIPE_SECRET_KEY: sk_test_ci_secret
-      NEXT_PUBLIC_APP_ENV: local
-      NEXT_PUBLIC_APP_URL: http://localhost:3000
-      NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: pk_test_ci_publishable
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -42,29 +46,184 @@ jobs:
         with:
           node-version: 20
           cache: pnpm
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-      - name: ESLint
-        run: pnpm lint
-      - name: Prettier
-        run: pnpm format
-      - name: Typecheck
-        run: pnpm typecheck
-      - name: Verify migration down pairs
-        run: pnpm --filter @food-marketplace/db verify:migrations
-      - name: Unit tests
-        run: pnpm test
-      - name: Env boot validation (apps)
-        run: |
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm audit --audit-level=high
+
+  typecheck:
+    name: Typecheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm typecheck
+
+  lint:
+    name: Lint + format
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm lint
+      - run: pnpm format
+
+  unit:
+    name: Unit tests + packages coverage (80%)
+    runs-on: ubuntu-latest
+    needs: [typecheck, lint]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm test:contracts
+      - run: pnpm test:coverage
+      - run: pnpm test:a11y
+
+  integration:
+    name: Integration (Postgres Docker)
+    runs-on: ubuntu-latest
+    needs: [unit]
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: food_marketplace
+        ports:
+          - 54322:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d food_marketplace"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @food-marketplace/db seed
+      - name: Integration tests
+        run: RUN_DB_INTEGRATION=1 pnpm test:integration
+      - name: RLS policy suite
+        run: RUN_DB_INTEGRATION=1 pnpm test:rls
+
+  build:
+    name: Production build + bundle budget
+    runs-on: ubuntu-latest
+    needs: [integration]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @food-marketplace/db verify:migrations
+      - run: |
           pnpm --filter @food-marketplace/web validate-env
           pnpm --filter @food-marketplace/admin validate-env
+      - run: pnpm --filter @food-marketplace/ui build-storybook
       - name: Next.js production build (web)
         run: |
           set -o pipefail
           pnpm --filter @food-marketplace/web build 2>&1 | tee /tmp/next-build.log
-      - name: Performance budgets (vitals + API harness)
-        run: pnpm perf:check
+      - run: pnpm perf:check
       - name: Bundle size budget
         run: |
           SHARED=$(grep -Eo 'First Load JS shared by all[[:space:]]+[0-9.]+' /tmp/next-build.log | awk '{print $NF}')
           FIRST_LOAD_JS_SHARED_KB="$SHARED" SKIP_BUNDLE_REBUILD=1 node scripts/perf/check-bundle-budget.mjs
+
+  e2e:
+    name: Playwright E2E (critical paths)
+    runs-on: ubuntu-latest
+    needs: [build]
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: food_marketplace
+        ports:
+          - 54322:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d food_marketplace"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @food-marketplace/db seed
+      - run: pnpm exec playwright install chromium --with-deps
+      - name: Start web server
+        run: |
+          pnpm --filter @food-marketplace/web start --port 3000 &
+          for i in $(seq 1 60); do
+            if curl -sf http://127.0.0.1:3000/api/health >/dev/null; then exit 0; fi
+            sleep 2
+          done
+          exit 1
+      - run: pnpm test:e2e
+
+  lighthouse:
+    name: Lighthouse CI
+    runs-on: ubuntu-latest
+    needs: [build]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @food-marketplace/web build
+      - name: Run Lighthouse CI
+        run: npx --yes @lhci/cli@0.14.0 autorun
+        env:
+          LHCI_GITHUB_APP_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  ci-gate:
+    name: All checks passed
+    runs-on: ubuntu-latest
+    needs: [gitleaks, audit, unit, integration, build, e2e, lighthouse]
+    steps:
+      - run: echo "CI pyramid complete"

@@ -1,3 +1,4 @@
+import jsxA11y from 'eslint-plugin-jsx-a11y';
 import eslint from '@eslint/js';
 import { foodMarketplacePlugin } from '@food-marketplace/config/eslint';
 import eslintConfigPrettier from 'eslint-config-prettier';
@@ -15,10 +16,13 @@ export default tseslint.config(
       'tests/fixtures/**',
       'apps/web/next-env.d.ts',
       'load/k6/**',
+      'apps/web/public/sw.js',
+      'packages/ui/**/*.css',
     ],
   },
   eslint.configs.recommended,
   ...tseslint.configs.recommended,
+  jsxA11y.flatConfigs.recommended,
   eslintConfigPrettier,
   {
     languageOptions: {
@@ -52,6 +56,37 @@ export default tseslint.config(
     },
     rules: {
       'food-marketplace/no-server-env-in-client': 'error',
+      '@typescript-eslint/no-explicit-any': 'error',
+    },
+  },
+  {
+    files: ['apps/web/**/*.{ts,tsx}'],
+    plugins: {
+      'food-marketplace': foodMarketplacePlugin,
+    },
+    rules: {
+      'food-marketplace/require-use-client-justification': 'error',
+    },
+  },
+  {
+    files: ['apps/web/**/*.{ts,tsx}', 'packages/shared-types/**/*.ts'],
+    rules: {
+      '@typescript-eslint/no-explicit-any': 'error',
+    },
+  },
+  {
+    files: ['packages/ui/src/components/**/*.{tsx,jsx}'],
+    plugins: {
+      'food-marketplace': foodMarketplacePlugin,
+    },
+    rules: {
+      'food-marketplace/no-hardcoded-design-values': 'error',
+    },
+  },
+  {
+    files: ['packages/ui/**/*.{tsx,jsx,css}', 'packages/ui/.storybook/**'],
+    rules: {
+      'food-marketplace/no-hardcoded-design-values': 'off',
     },
   },
   {

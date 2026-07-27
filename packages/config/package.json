@@ -13,7 +13,8 @@
     },
     "./tsconfig/base.json": "./tsconfig/base.json",
     "./tsconfig/node.json": "./tsconfig/node.json",
-    "./tsconfig/react.json": "./tsconfig/react.json"
+    "./tsconfig/react.json": "./tsconfig/react.json",
+    "./tsconfig/strict-react.json": "./tsconfig/strict-react.json"
   },
   "scripts": {
     "build": "tsc --project tsconfig.build.json",

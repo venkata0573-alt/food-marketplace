@@ -27,7 +27,7 @@ export function err<T = never>(
       code,
       message: message ?? publicMessage,
       publicMessage,
-      details,
+      ...(details ? { details } : {}),
     },
   };
 }

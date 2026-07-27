@@ -15,8 +15,8 @@ export async function applyRateLimitFromRequest(
 
   const result = await enforceRateLimits({
     ip,
-    userId: options.userId,
-    endpointKey: options.endpointKey,
+    ...(options.userId ? { userId: options.userId } : {}),
+    ...(options.endpointKey ? { endpointKey: options.endpointKey } : {}),
   });
 
   if (result && !result.allowed) {
