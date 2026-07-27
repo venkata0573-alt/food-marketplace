@@ -1,0 +1,7 @@
+{
+  "extends": "@food-marketplace/config/tsconfig/node.json",
+  "compilerOptions": {
+    "noEmit": true
+  },
+  "include": ["**/*.ts"]
+}

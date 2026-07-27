@@ -1,0 +1,46 @@
+# Dependencies & build output
+node_modules/
+.pnpm-store/
+.pnpm-debug.log*
+dist/
+build/
+.next/
+out/
+.turbo/
+coverage/
+*.tsbuildinfo
+
+# Environment & secrets (never commit real env files)
+.env
+.env.*
+!.env.example
+
+# Logs & diagnostics
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.eslintcache
+
+# OS & editors
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json.example
+
+# Test & cache
+.vitest/
+.cache/
+tmp/
+temp/
+
+# Local tooling
+*.local
+.vercel
+.netlify
+
+# Gitleaks / security scan artifacts
+gitleaks-report.json

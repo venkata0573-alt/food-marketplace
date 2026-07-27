@@ -1,0 +1,20 @@
+{
+  "name": "@food-marketplace/ui",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc --project tsconfig.build.json",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@food-marketplace/config": "workspace:*",
+    "typescript": "^5.8.2"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "name": "@food-marketplace/shared",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./authz": {
+      "types": "./authz.ts",
+      "default": "./authz.ts"
+    }
+  },
+  "scripts": {
+    "build": "node -e \"process.exit(0)\"",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@food-marketplace/config": "workspace:*",
+    "typescript": "^5.8.2"
+  }
+}

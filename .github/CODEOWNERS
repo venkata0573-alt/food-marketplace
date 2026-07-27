@@ -1,0 +1,11 @@
+# Default ownership — all paths fall back here unless overridden below.
+* @venkata0573-alt
+
+# Data layer
+/packages/db/** @venkata0573-alt
+
+# Authorization policy (sensitive)
+/packages/shared/authz.ts @venkata0573-alt
+
+# CI, branch rules, Dependabot, and repository automation
+/.github/** @venkata0573-alt
