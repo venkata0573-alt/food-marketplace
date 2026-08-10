@@ -24,7 +24,7 @@
     "verify:migrations": "bash ../../scripts/verify-migration-pairs.sh"
   },
   "dependencies": {
-    "drizzle-orm": "^0.40.0",
+    "drizzle-orm": "^0.45.2",
     "pg": "^8.14.1"
   },
   "devDependencies": {
