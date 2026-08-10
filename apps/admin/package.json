@@ -13,7 +13,7 @@
   },
   "devDependencies": {
     "@food-marketplace/config": "workspace:*",
-    "tsx": "^4.19.3",
+    "tsx": "^4.23.10",
     "typescript": "^5.8.2"
   }
 }
