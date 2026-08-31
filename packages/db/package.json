@@ -24,12 +24,12 @@
     "verify:migrations": "bash ../../scripts/verify-migration-pairs.sh"
   },
   "dependencies": {
-    "drizzle-orm": "^0.40.0",
-    "pg": "^8.14.1"
+    "drizzle-orm": "^0.45.2",
+    "pg": "^8.23.0"
   },
   "devDependencies": {
     "@food-marketplace/config": "workspace:*",
-    "@types/pg": "^8.11.11",
+    "@types/pg": "^8.23.1",
     "drizzle-kit": "^0.30.5",
     "tsx": "^4.19.3",
     "typescript": "^5.8.2"
