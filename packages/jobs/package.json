@@ -12,10 +12,10 @@
   },
   "dependencies": {
     "@food-marketplace/db": "workspace:*",
-    "pg": "^8.14.1"
+    "pg": "^8.23.1"
   },
   "devDependencies": {
-    "@types/pg": "^8.11.11",
+    "@types/pg": "^8.23.1",
     "tsx": "^4.19.3",
     "typescript": "^5.8.2"
   }
